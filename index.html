@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARAB ROLE RP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0507;
+            --bg-card: #14090c;
+            --primary-red: #ff1e46;
+            --bg-card-hover: #e0193d;
+            --red-glow: rgba(255, 30, 70, 0.4);
+            --text-main: #ffffff;
+            --text-sub: #cfc2c5;
+            --border-red: rgba(255, 30, 70, 0.25);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; padding: 10px; }
+        .mobile-container { width: 100%; max-width: 480px; min-height: 100vh; background-color: rgba(10, 5, 7, 0.98); padding: 16px; padding-bottom: 90px; position: relative; }
+        
+        /* الهيدر والقائمة */
+        .navbar { display: flex; justify-content: space-between; align-items: center; background: rgba(20, 9, 12, 0.9); border: 1px solid var(--border-red); border-radius: 18px; padding: 12px 16px; position: sticky; top: 10px; z-index: 100; backdrop-filter: blur(10px); }
+        .brand-title { font-size: 1.1rem; font-weight: 900; color: #fff; }
+        .brand-title span { color: var(--primary-red); }
+        .menu-btn { background: transparent; border: none; color: var(--primary-red); font-size: 1.6rem; cursor: pointer; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 999;
+            justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        
+        .menu-modal {
+            background: #120b10;
+            border: 1px solid var(--border-red);
+            border-radius: 24px;
+            width: 100%; max-width: 360px;
+            padding: 24px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px var(--red-glow);
+            display: flex; flex-direction: column; gap: 12px;
+            text-align: center;
+        }
+
+        .modal-link {
+            padding: 14px;
+            color: #fff; text-decoration: none;
+            font-weight: 800; font-size: 1.05rem;
+            border-radius: 14px; transition: 0.3s;
+            display: block;
+        }
+        .modal-link:hover { background: rgba(255, 30, 70, 0.1); color: var(--primary-red); }
+        .modal-link.active-link { background: var(--primary-red); color: #fff; box-shadow: 0 4px 15px var(--red-glow); }
+        
+        .page-section { display: none; margin-top: 20px; }
+        .page-section.active { display: block; }
+        .hero-card, .info-card, .founder-card { background: var(--bg-card); border: 1px solid var(--border-red); border-radius: 20px; padding: 20px; margin-bottom: 16px; text-align: center; }
+        .hero-title, .section-header h2 { font-size: 1.4rem; font-weight: 900; color: #fff; margin-bottom: 10px; }
+        .section-header { text-align: center; margin-bottom: 16px; }
+        
+        /* الأزرار */
+        .btn-discord { display: block; background: var(--primary-red); color: #fff; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: 800; box-shadow: 0 0 15px var(--red-glow); margin-top: 12px; text-align: center; }
+        .btn-discord-secondary { display: block; background: #5865F2; color: #fff; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: 800; box-shadow: 0 0 15px rgba(88, 101, 242, 0.4); margin-top: 12px; text-align: center; }
+        .btn-discord-dark { display: block; background: #18191c; border: 1px solid var(--primary-red); color: #fff; padding: 14px; border-radius: 12px; text-decoration: none; font-weight: 800; margin-top: 12px; text-align: center; }
+        
+        /* تصميم الأكورديون المطابق للصور */
+        .accordion-item { margin-bottom: 15px; border-radius: 20px; overflow: hidden; }
+        .accordion-header { 
+            background: var(--primary-red); 
+            color: #fff; padding: 18px 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            cursor: pointer; border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(255, 30, 70, 0.3);
+            transition: 0.3s;
+        }
+        .accordion-header:hover { background: var(--bg-card-hover); }
+        .accordion-header h3 { font-size: 1.1rem; font-weight: 900; }
+        .accordion-content { 
+            display: none; background: rgba(20, 9, 12, 0.95); 
+            border: 1px solid var(--border-red); border-top: none; 
+            border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; 
+            padding: 20px; color: var(--text-sub); font-size: 0.95rem; line-height: 1.8; text-align: right;
+        }
+
+        /* القائمة السفلية */
+        .bottom-nav { display: flex; justify-content: space-around; background: rgba(20, 9, 12, 0.95); border-top: 1px solid var(--border-red); position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; padding: 10px 0; z-index: 99; backdrop-filter: blur(10px); }
+        .bottom-btn { background: transparent; border: none; color: var(--text-sub); font-size: 0.75rem; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+        .bottom-btn i { font-size: 1.2rem; }
+        .bottom-btn.active { color: var(--primary-red); }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <header class="navbar">
+            <div class="brand-title">ARAB ROLE <span>RP</span></div>
+            <button class="menu-btn" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+        </header>
+
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="menu-modal">
+                <a href="javascript:void(0)" class="modal-link active-link" onclick="switchTab('home')">الرئيسية</a>
+                <a href="javascript:void(0)" class="modal-link" onclick="switchTab('rules')">القوانين</a>
+                <a href="javascript:void(0)" class="modal-link" onclick="switchTab('store')">المتجر</a>
+                <a href="javascript:void(0)" class="modal-link" onclick="switchTab('servers')">السيرفرات</a>
+                <a href="javascript:void(0)" class="modal-link" onclick="switchTab('founders')">المؤسسين</a>
+            </div>
+        </div>
+
+        <!-- 1. الرئيسية (مع الصورة المربعة بالضبط مثل الأصل) -->
+<section id="home" class="page-section active">
+    <div class="hero-card">
+        <!-- شعار السيرفر بمقاسات مربعة وصحيحة -->
+        <div style="text-align: center; margin-bottom: 15px;">
+            <img src="logo.png" alt="ARAB ROLE RP Logo" style="width: 130px; height: 130px; border-radius: 12px; border: 2px solid var(--primary-red); box-shadow: 0 0 15px var(--red-glow); object-fit: cover;">
+        </div>
+
+        <h1 class="hero-title">ARAB ROLE RP</h1>
+        <p style="color: var(--text-sub); font-size: 0.9rem; margin-bottom: 15px;">موقع عرب رول الرسمي اختصار الدس</p>
+        
+        <!-- أزرار التواصل -->
+        <a href="https://discord.gg/WP6aScCDa" target="_blank" class="btn-discord"><i class="fa-brands fa-discord"></i> السيرفر الرئيسي</a>
+        <a href="https://www.tiktok.com/@tih.tok.annar?r=is&_t=8Wp8j0x5V1A" target="_blank" class="btn-discord-secondary"><i class="fa-brands fa-tiktok"></i> تيك توك</a>
+        <a href="https://youtube.com/@phantomliferp-h2l?si=0dnw5x9iVq3K7n2z" target="_blank" class="btn-discord-dark"><i class="fa-brands fa-youtube"></i> يوتيوب</a>
+    </div>
+</section>
+
+        <!-- 2. القوانين (مطابقة للصور تماماً) -->
+        <section id="rules" class="page-section">
+            <div class="section-header"><h2>قوانين السيرفر</h2></div>
+            
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule1')">
+                    <h3>قوانين الحياة الجديدة - NLR</h3>
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <div class="accordion-content" id="rule1">
+                    في حال إغمائك بشكل كامل لا يمكنك الكلام أو الحركة او فعل أي شيء في حال تم اسقاطك من قبل شخص و تم انعاشك من قبل مسعفين تستطيع تذكر جميع الاحداث في حال تم اعطائك ابرة "في العيادة الخاصة" من احد اللاعبين اللذين لديهم عداوة معك لا تستطيع تذكر أي شي حصل لك ( منها العداوات او الاحداث )
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule2')">
+                    <h3>الباور جيمنج - PowerGaming</h3>
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <div class="accordion-content" id="rule2">
+                    استخدام الوسائل غير موجودة في اللعبة للحصول على ميزة أو عدم التوافق مع العالم بطريقة معقولة وبشكل واقعي ومنها التالي وهناك الكثير من المواقف والامثلة التي تندرج تحت Powergaming.
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule3')">
+                    <h3>الخوف على الحياة - NVL</h3>
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div class="accordion-content" id="rule3">
+                    عدم الخوف بشكل واقعي على حياتك عندما تتعرض للتهديد بالأسلحة أو بأذى شديد من وسائل أخرى يعتبر الخوف على الحياة شي اساسي ومهم جدا مثال : اذا كان هناك اداة تعرض حياتك للخطر.
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule4')">
+                    <h3>الميتا جيمنج - Metagaming</h3>
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="accordion-content" id="rule4">
+                    اي معلومة تحصل عليها من خارج المدينة مثال معلومة حصلت عليها من بث او دسكورد او مقطع باليوتيوب كلها تعتبر مخالفة.
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule5')">
+                    <h3>القتل العشوائي - RDM</h3>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div class="accordion-content" id="rule5">
+                    قتل الأشخاص دون سبب, تهديد, بصورة عشوائية او بدون عداوة يعتبر القتل العشوائي ممنوع ومخالف للنظام العام للسيرفر.
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule6')">
+                    <h3>قانون تقدير الحياة - Life City</h3>
+                    <i class="fa-solid fa-comment-dots"></i>
+                </div>
+                <div class="accordion-content" id="rule6">
+                    هي الحفاظ على حياتك وحياة الآخرين, وعدم التهور, وأن لا تستهين بقتل الأشخاص, وأن لا تقاوم المجرم أو الشرطة او اي شخص يحمل سلاح مهما كان خصوصاً اذا كنت أعزل، وهذا لا يمنع استعمال حق الدفاع عن النفس عند الضرورة التي تمنعك من طلب مساعدة الشرطة، وبكل الأحوال يجب محاورة اللاعب بشكل جيد والتفاوض معه قبل الشروع بأي عمل يعرض حياة اللاعب الآخر للخطر.
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule7')">
+                    <h3>القوانين العامة والشروط</h3>
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div class="accordion-content" id="rule7">
+                    <p style="font-weight: 700; color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-thumbtack"></i> شروط عامة</p>
+                    <ul style="list-style-type: disc; padding-right: 20px; margin-bottom: 12px;">
+                        <li>العمر المسموح لدخول السيرفر: 13 سنة فما فوق.</li>
+                        <li>ممنوع استخدام أي شخصية افتراضية إلا من خلال المتجر فقط.</li>
+                        <li>ممنوع كتابة أسمك باللغة الإنجليزية أو رموز أو تشكيل أو يكون اسم شخصيه مشهوره.</li>
+                        <li>يمنع دخول من أجهزة غير جهازك الشخصي.</li>
+                        <li>يحق لك امتلاك شخصين فقط.</li>
+                    </ul>
+                    <p style="font-weight: 700; color: #fff; margin-bottom: 8px;"><i class="fa-solid fa-video"></i> اللعب والبث</p>
+                    <ul style="list-style-type: disc; padding-right: 20px;">
+                        <li>ممنوع السُتريم سنايب أو متابعة البثوث أثناء اللعب (عقوبتها شديدة).</li>
+                        <li>ممنوع التواجد في الديسكورد أو التواصل الخارجي مع لاعبين آخرين أثناء اللعب.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion('rule8')">
+                    <h3>قوانين القيادة</h3>
+                    <i class="fa-solid fa-car"></i>
+                </div>
+                <div class="accordion-content" id="rule8">
+                    القيادة يجب أن تكون واقعية:
+                    <ul style="list-style-type: disc; padding-right: 20px; margin-top: 8px;">
+                        <li>لا سرعة مفرطة بدون سبب.</li>
+                        <li>لا قطع إشارات عشوائي.</li>
+                        <li>لا تهور بدون داعٍ.</li>
+                        <li>مخالفة هذه القوانين = تحذير Power Gaming أو باند.</li>
+                        <li>يمنع استخدام حركه رفع الدباب و النط من أي مكان سواء الأرصفة القصيرة و ذلك يتضمن ( الجسور - الجدران - المباني - العوائق التي تجعل الدباب يرتفع الى السماء).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. المتجر -->
+        <section id="store" class="page-section">
+            <div class="section-header"><h2>متجر السيرفر</h2></div>
+            <div class="info-card">
+                <p style="color: var(--text-sub);">قريباً سيتم افتتاح المتجر لشراء الرتب والعقارات والسيارات الخاصة.</p>
+            </div>
+        </section>
+
+        <!-- 4. السيرفرات -->
+        <section id="servers" class="page-section">
+            <div class="section-header"><h2>روابط السيرفرات</h2></div>
+            <div class="info-card">
+                <p style="color: var(--text-sub); margin-bottom: 15px;">انضم لسيرفراتنا الفرعية والاحتياطية:</p>
+                <a href="https://discord.gg/WP6aScCDa" target="_blank" class="btn-discord">سيرفر الاساسي</a>
+                <a href="https://discord.gg/QvTJe2fY7" target="_blank" class="btn-discord-secondary">سيرفر العصابات</a>
+                <a href="https://discord.gg/C5zPEWgQx" target="_blank" class="btn-discord-dark"> السيرفر الاحتياطي </a>
+            </div>
+        </section>
+
+        <!-- 5. المؤسسين -->
+        <section id="founders" class="page-section">
+            <div class="section-header"><h2>إدارة المؤسسين</h2></div>
+            <div class="founder-card"><h3 style="color: var(--primary-red); font-weight: 900;">أبو احمد</h3><p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">اونر سيرفر عرب رول وعبد</p></div>
+            <div class="founder-card"><h3 style="color: var(--primary-red); font-weight: 900;">أبو شمر</h3><p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">مسؤول برمجة عرب رول ورئاسي</p></div>
+            <div class="founder-card"><h3 style="color: var(--primary-red); font-weight: 900;">ELEVEN</h3><p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">مشرف برمجة عرب رول FAUNDER</p></div>
+            <div class="founder-card"><h3 style="color: var(--primary-red); font-weight: 900;">BARQ</h3><p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">رئاسي وحبيب الكل</p></div>
+        </section>
+
+        <!-- القائمة السفلية -->
+        <div class="bottom-nav">
+            <button class="bottom-btn active" id="btn-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
+            <button class="bottom-btn" id="btn-rules" onclick="switchTab('rules')"><i class="fa-solid fa-scroll"></i><span>القوانين</span></button>
+            <button class="bottom-btn" id="btn-store" onclick="switchTab('store')"><i class="fa-solid fa-store"></i><span>المتجر</span></button>
+            <button class="bottom-btn" id="btn-servers" onclick="switchTab('servers')"><i class="fa-solid fa-server"></i><span>السيرفرات</span></button>
+            <button class="bottom-btn" id="btn-founders" onclick="switchTab('founders')"><i class="fa-solid fa-crown"></i><span>المؤسسين</span></button>
+        </div>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const modalOverlay = document.getElementById('modalOverlay');
+        
+        menuToggle.addEventListener('click', () => { modalOverlay.classList.toggle('active'); });
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.bottom-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const targetSec = document.getElementById(tabId);
+            if(targetSec) targetSec.classList.add('active');
+            
+            const targetBtn = document.getElementById('btn-' + tabId);
+            if(targetBtn) targetBtn.classList.add('active');
+            
+            modalOverlay.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleAccordion(id) {
+            var content = document.getElementById(id);
+            if (content) {
+                content.style.display = (content.style.display === "block") ? "none" : "block";
+            }
+        }
+    </script>
+</body>
+</html>
